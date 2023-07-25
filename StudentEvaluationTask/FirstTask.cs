@@ -15,7 +15,6 @@ namespace StudentEvaluationTask
             for (int i = start; i <= end; i++)
             {
 
-
                 if (i % 3 == 0 && i % 5 == 0)
                 {
                     Console.WriteLine("Djeljiv s 3 i 5");
