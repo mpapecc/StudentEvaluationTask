@@ -28,12 +28,12 @@ namespace StudentEvaluationTask
             IList<string> subdirectories = Directory.GetDirectories(path);
             IList<string> files = Directory.GetFiles(path);
             string relativePath = path.Replace(root, "");
-            int identation = IdentationBySlashes(relativePath)+1;
+            int identation = IdentationBySlashes(relativePath);
             if (files.Count > 0)
             {
                 foreach (var file in files)
                 {
-                    string name = file.Split(path).Last();
+                    string name = file.Split(path).Last().Remove(0,1);
                     Console.WriteLine(new string('\t', identation) + identation + "." + name);
                 }
             }
@@ -42,7 +42,7 @@ namespace StudentEvaluationTask
             {
                 foreach (var directory in subdirectories)
                 {
-                    string name = directory.Split(path).Last();
+                    string name = directory.Split(path).Last().Remove(0,1);
                     subdirectories = Directory.GetDirectories(directory);
                     files = Directory.GetFiles(directory);
                     Console.WriteLine(new string('\t', identation) + identation + "." + name + $"[folders :{subdirectories.Count}][files : {files.Count}]");
@@ -63,7 +63,7 @@ namespace StudentEvaluationTask
 
             if (IsFile(path))
             {
-                Console.WriteLine(IdentationBySlashes(path.Replace(path, "")) + 1 + ". " + path.Split(@"\").Last());
+                Console.WriteLine(IdentationBySlashes(path.Replace(path, "")) -1 + ". " + path.Split(@"\").Last());
                 return;
             }
 
@@ -71,7 +71,7 @@ namespace StudentEvaluationTask
             {
                 IList<string> subdirectories = Directory.GetDirectories(path);
                 IList<string> files = Directory.GetFiles(path);
-                Console.WriteLine(IdentationBySlashes(path.Replace(path, "")) + ". " + path.Split(@"\").Last() + $"[folders :{subdirectories.Count}][files : {files.Count}]");
+                Console.WriteLine(IdentationBySlashes(path.Replace(path, ""))-1 + ". " + path.Split(@"\").Last() + $"[folders :{subdirectories.Count}][files : {files.Count}]");
                 PrintSubdirectoryTree(path, path);
             }
         }
