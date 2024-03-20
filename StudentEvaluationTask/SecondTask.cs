@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace StudentEvaluationTask
 {
@@ -23,12 +24,32 @@ namespace StudentEvaluationTask
             return Directory.Exists(path);
         }
 
-        public static void PrintSubdirectoryTree(string root, string path)
+        public static (int folders, int files) PrintSubdirectoryTree(string root, string path)
         {
+
             IList<string> subdirectories = Directory.GetDirectories(path);
             IList<string> files = Directory.GetFiles(path);
+            (int folders, int files) counters = (subdirectories.Count, files.Count);
+
             string relativePath = path.Replace(root, "");
             int identation = IdentationBySlashes(relativePath);
+
+            if (subdirectories.Count > 0)
+            {
+                foreach (var directory in subdirectories)
+                {
+                    string name = directory.Split(path).Last().Remove(0, 1);
+                    subdirectories = Directory.GetDirectories(directory);
+                    files = Directory.GetFiles(directory);
+                    var tuple = PrintSubdirectoryTree(root, directory);
+                    counters.folders += tuple.folders;
+                    counters.files += tuple.files;
+                }
+            }
+
+            Console.WriteLine(new string('\t', identation) + identation + "." + path + $"[folders :{counters.folders}][files : {counters.files}]");
+
+
             if (files.Count > 0)
             {
                 foreach (var file in files)
@@ -37,20 +58,7 @@ namespace StudentEvaluationTask
                     Console.WriteLine(new string('\t', identation) + identation + "." + name);
                 }
             }
-             
-            if (subdirectories.Count > 0)
-            {
-                foreach (var directory in subdirectories)
-                {
-                    string name = directory.Split(path).Last().Remove(0,1);
-                    subdirectories = Directory.GetDirectories(directory);
-                    files = Directory.GetFiles(directory);
-                    Console.WriteLine(new string('\t', identation) + identation + "." + name + $"[folders :{subdirectories.Count}][files : {files.Count}]");
-                    PrintSubdirectoryTree(root, directory);
-                }
-            }
-
- 
+            return counters;
         }
 
         public static void Solution(string path)
